@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<nav th:replace="fragments.html :: main-nav"></nav>
+
+<!--//TODO 가입 축하가 아니라 체크하는 페이지 그러니까 check 하는 페이지이다.-->
+
+<div class="container">
+    <div class="py-5 text-center" th:if="${error != null}">
+        <p class="lead">welcom 가입</p>
+        <div class="alert alert-warning" role="alert" th:text="${error}"></div>
+        <p class="lead" th:text="${email}">your@email.com</p>
+    </div>
+    <div class="py-5 text-center" th:if="${error == null}">
+        <p class="lead">welcom 가입</p>
+        <h2>서비스를 이용하려면 이메일 인증을 확인해주세요.</h2>
+        <div>
+            <p class="lead" th:text="${email}">your@email.com</p>
+            <button class="btn btn-outline-dark" th:href="@{/resend-confirm-email}">인증 이메일 다시보내기</button>
+        </div>
+    </div>
+</div>
+
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

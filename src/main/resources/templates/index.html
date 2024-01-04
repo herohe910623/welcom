@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+    스터디 가입을 완료하려면
+    <a th:href="@{/check-email}" class="alert-link"> 계정 이메일 인증</a>
+    을 완료하세요.
+</div>
+<div class="mt-20" th:if="${account == null}">
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1>Welcom.</h1>
+            <p class="lead text-muted">
+                태그와 지역 기반으로 취업활동에 빠져보세요 </br>
+                테스트 중 입니다.
+            </p>
+            <p>
+                <a th:href="@{/sign-up}" class="btn btn-primary my-2">회원 가입</a>
+            </p>
+        </div>
+    </section>
+</div>
+<div>
+    잘됩니다.
+</div>
+
+<!--<script src="/node_modules/jquery/dist/jquery.min.js"></script>-->
+<!--<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>-->
+</body>
+</html>
