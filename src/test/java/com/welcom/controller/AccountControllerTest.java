@@ -112,4 +112,7 @@ class AccountControllerTest {
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(authenticated().withUsername("nickname"));   //accountService.login() 과정을 거치면서 authentication() 과정을 거친다.
     }
+
+
+
 }
