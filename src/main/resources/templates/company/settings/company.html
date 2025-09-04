@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: company-banner"></div>
+
+<div class="container">
+    <div th:replace="fragments.html :: company-info"></div>
+    <div th:replace="fragments.html :: company-menu (companyMenu='settings')"></div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-2">
+            <div th:replace="fragments.html :: company-setting-menu (currentMenu = 'company')"></div>
+        </div>
+        <div class="col-8">
+            <div th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div class="row">
+                <h5 class="col-sm-12">회사 공개 및 종료</h5>
+                <form th:if="${!company.published && !company.closed}" class="col-sm-12"
+                      th:action="@{'/company/' + ${company.getPath()} + '/settings/company/publish'}" method="post"
+                      novalidate>
+                    <div class="alert alert-info" role="alert">
+                        공고를 공개할 준비가 되었다면 버튼을 클릭하세요. <br/>
+                        소개, 배너 이미지, 회사 기술 및 지역을 등록했는지 확인하세요. <br/>
+                        회사를 공개하면 주요 활동 지역과 회사 기술에 관심이 있는 지원자에게 알림을 전송합니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">
+                            모집 공개
+                        </button>
+                    </div>
+                </form>
+                <form th:if="${company.published && !company.closed}" class="col-sm-12"
+                      th:action="@{'/company/' + ${company.getPath()} + '/settings/company/close'}" method="post"
+                      novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        공고 모집을 마쳤다면 일정을 종료하세요.
+                        공고일정을 종료하면 더이상 팀원을 모집하거나 공고를 만들 수 없으며, 회사 경로와 이름을 수정할 수 없습니다.
+                        회사 모집과 지원한 사람의 기록은 그대로 보관합니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">
+                            모집 종료
+                        </button>
+                    </div>
+                </form>
+                <div th:if="${company.closed}" class="col-sm-12 alert alert-info">
+                    이 공고는 <span class="date-time" th:text="${company.closedDateTime}"></span>에 종료됐습니다.<br/>
+                    다시 공고를 진행하고 싶다면 새로운 공고를 만드세요. <br/>
+                </div>
+            </div>
+
+            <hr th:if="${!company.closed && !company.recruiting && company.published}"/>
+            <div class="row" th:if="${!company.closed && !company.recruiting && company.published}">
+                <h5 class="col-sm-12">지원 모집</h5>
+                <form class="col-sm-12" th:action="@{'/company/' + ${company.getPath()} + '/settings/recruit/start'}"
+                      method="post" novalidate>
+                    <div class="alert alert-info" role="alert">
+                        회사 지원자를 받습니다.<br/>
+                        충분한 회사 지원자를 모집했다면 공고를 내릴 수 있습니다.<br/>
+                        공고 모집 정보는 3시간에 한번만 바꿀 수 있습니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">지원받기
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <hr th:if="${!company.closed && company.recruiting && company.published}"/>
+            <div class="row" th:if="${!company.closed && company.recruiting && company.published}">
+                <h5 class="col-sm-12">지원 모집</h5>
+                <form class="col-sm-12" th:action="@{'/company/' + ${company.getPath()} + '/settings/recruit/stop'}"
+                      method="post" novalidate>
+                    <div class="alert alert-primary" role="alert">
+                        회사 지원자를 그만받습니다.<br/>
+                        지원자를 더 받고싶다면 다시 지원을 받기 시작할 수 있습니다.<br/>
+                        지원자 모집 정보는 1시간에 한번만 바꿀 수 있습니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">지원그만 받기
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <hr th:if="${!company.closed}"/>
+            <div class="row" th:if="${!company.closed}">
+                <h5 class="col-sm-12">회사 경로</h5>
+                <form class="col-sm-12 needs-validation"
+                      th:action="@{'/company/' + ${company.path} + '/settings/company/path'}" method="post" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        회사 경로를 수정하면 이전에 사용하던 경로로 회사에 접근할 수 없으니 주의하세요.<br/>
+                    </div>
+                    <div class="form-group">
+                        <input id="path" type="text" name="newPath" th:value="${company.path}" class="form-control"
+                               placeholder="예) company-path" aria-describedby="pathHelp" required>
+                        <small id="pathHelp" class="form-text text-muted">
+                            공백없이 문자, 숫자, 대시(-)와 언더바(_)만 3자 이상 20자 이내로 입력하세요. 회사 홈 주소에 사용합니다.
+                            예) /company/<b>company-path</b>
+                        </small>
+                        <small class="invalid-feedback">회사 경로를 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${companyPathError}" th:text="${companyPathError}">path
+                            Error</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">경로 수정
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <hr th:if="${!company.closed}"/>
+            <div class="row" th:if="${!company.closed}">
+                <h5 class="col-12">회사 이름</h5>
+                <form class="needs-validation col-12"
+                      th:action="@{'/company/' + ${company.path} + '/settings/company/name'}" method="post" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        회사 이름을 수정합니다.<br/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">회사 이름</label>
+                        <input id="name" type="text" name="newName" th:value="${company.name}" class="form-control"
+                               placeholder="회사 이름" aria-describedby="nameHelp" required maxlength="50">
+                        <small id="nameHelp" class="form-text text-muted">
+                            회사 이름을 50자 이내로 입력하세요.
+                        </small>
+                        <small class="invalid-feedback">회사 이름을 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${companyNameError}" th:text="${companyNameError}">name Error</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">회사 이름 수정</button>
+                    </div>
+                </form>
+            </div>
+
+            <hr/>
+
+            <div class="row" th:if="${company.isRemovable()}">
+                <h5 class="col-sm-12 text-danger">회사 삭제</h5>
+                <form class="col-sm-12" th:action="@{'/company/' + ${company.getPath()} + '/settings/company/remove'}" method="post" novalidate>
+                    <div class="alert alert-danger" role="alert">
+                        회사를 삭제하면 회사 관련 모든 기록을 삭제하며 복구할 수 없습니다. <br/>
+                        <b>다음에 해당하는 회사는 자동으로 삭제 됩니다.</b>
+                        <ul>
+                            <li>만든지 1주일이 지난 비공개 모집공고</li>
+                            <li>모집 공개 이후, 한달 동안 공고를 만들지 않은 회사</li>
+                            <li>모집 공개 이후, 공고를 만들지 않고 종료한 회사</li>
+                        </ul>
+                     </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-danger" type="submit" aria-describedby="submitHelp">회사 삭제</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row" th:if="${!company.isRemovable()}">
+                <h5 class="col-sm-12 text-danger">회사 삭제</h5>
+                <form class="col-sm-12" th:action="@{'/company/' + ${company.getPath()} + '/settings/company/remove'}" method="post" novalidate>
+                    <div class="alert alert-danger" role="alert">
+                        모집 중이고 공고를 했던 회사는 삭제할 수 없습니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-danger" type="submit" aria-describedby="submitHelp" disabled>회사 삭제</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--    <footer th:replace="fragments.html :: footer"></footer>-->
+</div>
+<script th:replace="fragments.html :: tooltip"></script>
+<script th:replace="fragments.html :: form-validation"></script>
+</body>
+</html>

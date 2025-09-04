@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu (currentMenu = 'zones')"></div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <h2 class="col-12">주요 활동 지역</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        주로 다닐 수 있는 지역을 입력해 주세요. 해당 지역에 공고가 생기면 알림을 받을 수 있습니다.<br/>
+                        시스템에 등록된 지역만 사용할 수 있습니다.
+                    </div>
+                    <div id="whitelist" th:text="${whitelist}" hidden></div>
+                    <input id="zones" type="text" name="zones" th:value="${#strings.listJoin(zones, ',')}"
+                           class="tagify-outside" aria-describedby="zoneHelp"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+<script type="application/javascript">
+    $(function () {
+        function zoneRequest(url, zoneName) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method:"POST",
+                url: "/settings/zones" + url,
+                data: JSON.stringify({'zoneName' :zoneName})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+        function onAdd(e) {
+            zoneRequest("/add", e.detail.data.value);
+        }
+        function onRemove(e) {
+            zoneRequest("/remove", e.detail.data.value);
+        }
+        var zoneInput = document.querySelector("#zones");
+        var tagify = new Tagify(zoneInput, {
+            enforceWhitelist: true,
+            whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+            dropdown: {
+                enabled: 1,
+            }
+        });
+        tagify.on("add", onAdd);
+        tagify.on("remove",onRemove);
+
+        tagify.DOM.input.classList.add('form-control');
+        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+    });
+</script>
+</body>
+</html>

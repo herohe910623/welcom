@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: company-banner"></div>
+
+<div class="container">
+    <div th:replace="fragments.html :: company-info"></div>
+    <div th:replace="fragments.html :: company-menu (companyMenu='members')"></div>
+    <div th:replace="fragments.html :: member-list (members=${company.managers},isManager=${true})"></div>
+    <div th:replace="fragments.html :: member-list (members=${company.members},isManager=${false})"></div>
+
+
+</div>
+<script type="application/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+</body>
+</html>
