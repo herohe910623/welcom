@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: company-banner"></div>
+
+<div class="container">
+    <div th:replace="fragments.html :: company-info"></div>
+    <div th:replace="fragments.html :: company-menu (companyMenu='settings')"></div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-2">
+            <div th:replace="fragments.html :: company-setting-menu (currentMenu = 'description')"></div>
+        </div>
+        <div class="col-8">
+            <div th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <form class="needs-validation" th:action="@{'/company/' + ${company.getPath()} + '/settings/description'}"
+                  th:object="${companyDescriptionForm}" method="post" novalidate>
+                <div class="form-group">
+                    <label for="shortDescription">짧은 소개</label>
+                    <textarea id="shortDescription" type="textarea" th:field="*{shortDescription}" class="form-control"
+                              placeholder="회사를 짧게 소개해주세요." aria-describedby="shortDescriptionHelp" required
+                              maxlength="100">
+                </textarea>
+                    <small id="shortDescriptionHelp" class="form-text text-muted">
+                        100자 이내로 짧은 소개를 해주세요.
+                    </small>
+                    <small class="invalid-feedback">짧은 소개를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('shortDescription')}"
+                           th:errors="*{shortDescription}">shortDescription errors</small>
+                </div>
+                <div class="form-group">
+                    <label for="fullDescription">상세 소개</label>
+                    <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}"
+                              class="editor form-control"
+                              placeholder="회사를 상세하게 적어주세요." aria-describedby="fullDescriptionHelp" required>
+                </textarea>
+                    <small id="fullDescriptionHelp" class="form-text text-muted">
+                        회사의 목표, 모집 일정, 진행 방식, 회사링크 그리고 회사에서 모집중인 정보등 회사에 대해 상세하게 적어주세요.
+                    </small>
+                    <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}"
+                           th:errors="*{fullDescription}">fullDescription errors</small>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            aria-describedby="submitHelp">수정하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    <footer th:replace="fragments.html :: footer"></footer>-->
+</div>
+<script type="application/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<script th:replace="fragments.html :: form-validation"></script>
+<script th:replace="fragments.html :: editor-script"></script>
+</body>
+</html>

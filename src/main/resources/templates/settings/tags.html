@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu (currentMenu = 'tags')"></div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <h2 class="col-12">관심있는 주제</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        자신의 관심있는 기술의 주제를 입력해 주세요. 해당 공고가 생기면 알림을 받을 수 있습니다. 기술을 입력하고 콤마(,)
+                        또는 엔터를 입력하세요.
+                    </div>
+                    <div id="whitelist" th:text="${whitelist}" hidden></div>
+                    <input id="tags" type="text" name="tags" th:value="${#strings.listJoin(tags, ',')}"
+                           class="tagify-outside" aria-describedby="tagHelp"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+<script type="application/javascript">
+    $(function () {
+        function tagRequest(url, tagTitle) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method:"POST",
+                url: "/settings/tags" + url,
+                data: JSON.stringify({'tagTitle' : tagTitle})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+        function onAdd(e) {
+            tagRequest("/add", e.detail.data.value);
+        }
+        function onRemove(e) {
+            tagRequest("/remove", e.detail.data.value);
+        }
+        var tagInput = document.querySelector("#tags");
+        var tagify = new Tagify(tagInput, {
+
+            pattern: /^.{0,20}$/,
+            whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+            dropdown: {
+                enabled: 1,
+            }
+        });
+        tagify.on("add", onAdd);
+        tagify.on("remove",onRemove);
+
+        tagify.DOM.input.classList.add('form-control');
+        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+    });
+</script>
+</body>
+</html>

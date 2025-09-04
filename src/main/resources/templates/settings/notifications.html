@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-2">
+            <div th:replace="fragments.html :: settings-menu (currentMenu = 'notifications')"></div>
+        </div>
+        <div class="col-8">
+            <div th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">메세지</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col-sm-12">알림 설정</h2>
+            </div>
+            <div class="row mt-3">
+                <form class="col-sm-12" th:action="@{/settings/notifications}" th:object="${notificationsForm}"
+                      method="post"
+                      novalidate>
+                    <div class="alert alert-light" role="alert">
+                        <strong><a href="#" th:href="@{/settings/locations}">주요 활동 지역</a>에
+                            <a href="#" th:href="@{/settings/keywords}">관심있는 주제</a>의 회사가 만들어졌을 때
+                        </strong>
+                        알림을 받을 방법을 설정하세요.
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyCreatedByEmail}" class="custom-control-input"
+                                   id="companyCreatedByEmail">
+                            <label class="custom-control-label" for="companyCreatedByEmail">이메일로 받기</label>
+                        </div>
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyCreatedByWeb}" class="custom-control-input"
+                                   id="companyCreatedByWeb">
+                            <label class="custom-control-label" for="companyCreatedByWeb">웹으로 받기</label>
+                        </div>
+                    </div>
+                    <div class="alert alert-light" role="alert">
+                        <strong><a href="#" th:href="@{/}">회사 신청</a> 결과 알림을 받을 방법을 설정하세요.</strong>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyRecruitResultByEmail}"
+                                   class="custom-control-input"
+                                   id="companyRecruitResultByEmail">
+                            <label class="custom-control-label" for="companyRecruitResultByEmail">이메일로 받기</label>
+                        </div>
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyRecruitResultByWeb}" class="custom-control-input"
+                                   id="companyRecruitResultByWeb">
+                            <label class="custom-control-label" for="companyRecruitResultByWeb">웹으로 받기</label>
+                        </div>
+                    </div>
+                    <div class="alert alert-light" role="alert">
+                        <strong><a href="#" th:href="@{/}">관심있는 회사</a>에 대한 알림을 받을 방법을 설정하세요.</strong>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyUpdatedByEmail}" class="custom-control-input"
+                                   id="companyUpdatedByEmail">
+                            <label class="custom-control-label" for="companyUpdatedByEmail">이메일로 받기</label>
+                        </div>
+                        <div class="custom-control custom-switch custom-control-inline">
+                            <input type="checkbox" th:field="*{companyUpdatedByWeb}" class="custom-control-input"
+                                   id="companyUpdatedByWeb">
+                            <label class="custom-control-label" for="companyUpdatedByWeb">웹으로 받기</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">저장하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
